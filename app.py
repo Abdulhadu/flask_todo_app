@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager , UserMixin , login_required ,login_user, logout_user,current_user
+from flask_paginate import Pagination, get_page_args
 from flask_migrate import Migrate
 from datetime import datetime
 
@@ -93,13 +94,19 @@ def hello_world():
         
     page = request.args.get('page', 1, type=int)
     allTodo, total_pages = get_paginated_todos(page)
-    allTodo = Todo.query.all()
     return render_template('index.html', allTodo = allTodo, current_user=current_user, total_pages=total_pages)
 
 def get_paginated_todos(page):
-    allTodo = Todo.query.order_by(Todo.pub_date.desc()).paginate(page=page, per_page=PER_PAGE)
+    per_page = 5  # Set the number of items per page
+    allTodo = Todo.query.order_by(Todo.pub_date.desc()).paginate(page=page, per_page=per_page)
     total_pages = allTodo.pages
-    return allTodo, total_pages
+     # Calculate the starting index for the current page
+    start_index = (page - 1) * per_page + 1
+
+    # Calculate the index value for each item
+    for index, todo in enumerate(allTodo.items, start=start_index):
+        todo.index = index
+    return allTodo.items, total_pages
 
 @app.route("/update/<int:sno>",  methods=['GET','POST'])
 def update(sno):
