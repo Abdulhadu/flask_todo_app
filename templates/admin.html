@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title%}
+UPDATE
+{% endblock title %}
+{% block body %}
+<section class="bg-gray-50 mt-16 h-screen dark:bg-gray-900 p-3 sm:p-5 antialiased">
+    <div class="dark:bg-gray-900 w-full">
+<h1 class="text-4xl underline sm:ml-20 font-bold text-white my-5" >Admin Dashboard</h1>
+        {% if current_user.email %}
+        <h1 class="text-2xl sm:ml-20 font-bold text-white my-5">Admin Email: [
+          <span class="text-xl text-gray-200">{{ current_user.email }}!</span> ]  
+        </h1>
+        {% endif %}
+        <section class="bg-gray-50 dark:bg-gray-900 p-3 sm:p-5 antialiased">
+            <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
+                <h1 class="text-2xl font-bold text-center text-white my-5">
+                    Check Users Details 
+                </h1>
+                <h3 class="text-xl text-white">No of Total Users {{total_users}}</h3>
+                <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg sm:overflow-hidden">
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                            <thead
+                                class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <tr>
+                                    <th scope="col" class="px-4 py-4">Sr no</th>
+                                    <th scope="col" class="px-4 py-4">Users Email</th>
+                                    <th scope="col" class="px-4 py-3">No Of Todos</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user_data in users_with_todo_count %}
+                                <tr class="border-b dark:border-gray-700">
+                                    <td class="px-4 py-3">{{loop.index}}</td>
+                                    <th scope="row"
+                                        class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        {{ user_data['user'].email }}
+                                    </th>
+                                    <td class="px-4 py-3">{{ user_data['todo_count'] }}</td>
+                                    <td class="px-4 py-3 flex items-center justify-end">
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </div>
+</section>
+
+
+
+{% endblock body %}
