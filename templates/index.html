@@ -122,30 +122,42 @@ HOME
           </thead>
           <tbody>
             {% for todo in allTodo %}
-            <tr class="border-b dark:border-gray-700">
-              <td class="px-4 py-3">{{todo.index}}</td>
-              <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                {{todo.title}}
-              </th>
-              <td class="px-4 py-3"> {{todo.category}}</td>
-              <td class="px-4 py-3 max-w-[12rem] truncate">
-                {{todo.desc}}
-              </td>
-              <td class="px-4 py-3 flex items-center justify-end">
-                <a href="/update/{{todo.sno}}">
-                  <button
-                    class="bg-transparent hover:bg-blue-400 text-blue-400 font-semibold hover:text-white mx-2 py-2 px-4 border border-blue-500 hover:border-transparent rounded">
-                    Edit
-                  </button>
-                </a>
-                <a href="/delete/{{todo.sno}}" onclick="">
-                  <button
-                    class="bg-transparent text-blue-400 font-semibold hover:bg-blue-500 hover:text-white mx-2 py-2 px-4 border border-blue-500 hover:border-transparent rounded">
-                    Delete
-                  </button>
-                </a>
-              </td>
-            </tr>
+            
+              <tr class="border-b dark:border-gray-700">
+                <td class="px-4 py-3">{{todo.index}}</td>
+                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+
+                  {{todo.title}}
+                </th>
+                <td class="px-4 py-3"> {{todo.category}}</td>
+                <td class="px-4 py-3 max-w-[12rem] truncate">
+                  {{todo.desc}}
+                </td>
+                <td class="px-4 py-3 flex items-center justify-end">
+                  <a href="/update/{{todo.sno}}">
+                    <button
+                      class="bg-transparent hover:bg-blue-400 text-blue-400 font-semibold hover:text-white mx-2 py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+                      Edit
+                    </button>
+                  </a>
+                  <a href="/delete/{{todo.sno}}" onclick="">
+                    <button
+                      class="bg-transparent text-blue-400 font-semibold hover:bg-blue-500 hover:text-white mx-2 py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+                      Delete
+                    </button>
+                  </a>
+                  <a href="/displaytask/{{todo.sno}}">
+                  <button type="button" data-drawer-target="drawer-read-product-advanced" data-drawer-show="drawer-read-product-advanced" aria-controls="drawer-read-product-advanced" class="py-2 px-3 flex items-center text-sm font-medium text-center text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" fill="currentColor" class="w-4 h-4 mr-2 -ml-0.5">
+                        <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 010-1.113zM17.25 12a5.25 5.25 0 11-10.5 0 5.25 5.25 0 0110.5 0z" />
+                    </svg>
+                    Preview
+                </button>
+              </a>
+                </td>
+              </tr>
+            </a>
             {% endfor %}
 
           </tbody>
@@ -157,38 +169,50 @@ HOME
         <ul class="inline-flex items-stretch -space-x-px">
           {% if allTodo.has_prev %}
           <li>
-              <a href="{{ url_for('hello_world', page=allTodo.prev_num) }}" class="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                  <span class="sr-only">Previous</span>
-                  <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                      <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-                  </svg>
-              </a>
+            <a href="{{ url_for('hello_world', page=allTodo.prev_num) }}"
+              class="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+              <span class="sr-only">Previous</span>
+              <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                  d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                  clip-rule="evenodd" />
+              </svg>
+            </a>
           </li>
-      {% endif %}
-  
-      {% for num in range(1, total_pages + 1) %}
-          {% if num == current_page %}
-              <li>
-                  <a href="{{ url_for('hello_world', page=num) }}" aria-current="page" class="flex items-center justify-center text-sm z-10 py-2 px-3 leading-tight text--600 bg-gray-50 border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">{{ num }}</a>
-              </li>
-          {% else %}
-              <li>
-                  <a href="{{ url_for('hello_world', page=num) }}" class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">{{ num }}</a>
-              </li>
           {% endif %}
-      {% endfor %}
-  
-      {% if allTodo.has_next %}
+
+          {% for num in range(1, total_pages + 1) %}
+          {% if num == current_page %}
           <li>
-              <a href="{{ url_for('hello_world', page=allTodo.next_num) }}" class="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                  <span class="sr-only">Next</span>
-                  <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                      <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                  </svg>
-              </a>
+            <a href="{{ url_for('hello_world', page=num) }}" aria-current="page"
+              class="flex items-center justify-center text-sm z-10 py-2 px-3 leading-tight text--600 bg-gray-50 border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">{{
+              num }}</a>
           </li>
-      {% endif %}
-      </ul>
+          {% else %}
+          <li>
+            <a href="{{ url_for('hello_world', page=num) }}"
+              class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">{{
+              num }}</a>
+          </li>
+          {% endif %}
+          {% endfor %}
+
+          {% if allTodo.has_next %}
+          <li>
+            <a href="{{ url_for('hello_world', page=allTodo.next_num) }}"
+              class="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+              <span class="sr-only">Next</span>
+              <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                  clip-rule="evenodd" />
+              </svg>
+            </a>
+          </li>
+          {% endif %}
+        </ul>
       </nav>
     </div>
   </div>

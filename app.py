@@ -25,7 +25,8 @@ class Todo(db.Model):
     user_email = db.Column(db.String(200), nullable=False)
     pub_date = db.Column(db.DateTime, nullable=False,
         default=datetime.utcnow)
-    sub_tasks = db.relationship('SubTask', backref='todo', lazy=True)
+    
+    # sub_tasks = db.relationship('SubTask', backref='parrent_todo', lazy=True)
 
     def __repr__(self)-> str:
         return f"{self.sno} - {self.title}"
@@ -34,10 +35,10 @@ class SubTask(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     desc = db.Column(db.String(200), nullable=False)
-    todo_id = db.Column(db.Integer, db.ForeignKey('Todo.sno'), nullable=False)
+    todo_id = db.Column(db.Integer, db.ForeignKey('todo.sno'), nullable=False)
     pub_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     
-    todo = db.relationship('Todo', backref='sub_tasks', lazy=True)
+    # parrent_todo = db.relationship('Todo', backref='sub_tasks', lazy=True)
     
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -59,6 +60,7 @@ def get_login():
 @app.route('/signup',methods=['GET'])
 def get_signup():
     return render_template('signup.html')
+
 
 
 @app.route('/login',methods=['POST'])
@@ -191,8 +193,34 @@ def search():
     else:
         return redirect('/login')
 
+@app.route('/displaytask/<int:sno>', methods=['GET', 'POST'])
+def get_task(sno):
+    todo = Todo.query.get_or_404(sno)  
+    alltask = SubTask.query.filter_by(todo_id=sno).all() 
+    return render_template('subtask.html',todo=todo,  alltask=alltask, sno=sno)
+    
+    
+@app.route('/addtask/<int:sno>', methods=['GET', 'POST'])
+def add_task(sno):
+    print("sno:", sno) 
+    if request.method == "POST":
+        sub_Title = request.form['title']
+        sub_Desc = request.form['desc']
+        if current_user.is_authenticated:
+            sub_Task = SubTask(title=sub_Title, desc=sub_Desc, todo_id=sno)
+            db.session.add(sub_Task)
+            db.session.commit()
+            alltask = SubTask.query.all() 
+            return render_template('subtask.html', alltask=alltask , sno = sno)
+        else:
+            return redirect('/login')
+    else:
+        # Handle the 'GET' request case here
+        return render_template('subtask.html') 
 
-@app.route("/update/<int:sno>",  methods=['GET','POST'])
+
+            
+@app.route("/update/<int:sno>",  methods=['GET','POS'])
 def update(sno):
      if request.method=="POST":
         Title=request.form['title']
@@ -209,7 +237,6 @@ def update(sno):
      updateTodo = Todo.query.filter_by(sno = sno).first()   
      return render_template('update.html', updateTodo = updateTodo)
 
-
 @app.route('/delete/<int:sno>')
 def delete(sno):
     deleteTodo = Todo.query.filter_by(sno = sno).first()
@@ -218,6 +245,6 @@ def delete(sno):
     return redirect("/")
 
      
-        
+
 if __name__ == "__main__":
     app.run(debug=True)
