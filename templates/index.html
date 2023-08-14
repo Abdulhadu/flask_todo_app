@@ -6,6 +6,7 @@ HOME
 
 
 <section class="bg-gray-50 mt-16 dark:bg-gray-900 p-3 sm:p-5 antialiased">
+  {% include 'flash_messages.html' %}
   <div class="dark:bg-gray-900 w-full">
     {% if current_user.email %}
     <h1 class="text-4xl sm:ml-20 font-bold text-white my-5">Hello, (
@@ -50,6 +51,7 @@ HOME
 
 <!-- check the task  -->
 <section class="bg-gray-50 dark:bg-gray-900 p-3 sm:p-5 antialiased">
+
   <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
     <h1 class="text-2xl font-bold text-center text-white my-5">
       Check Your Task
@@ -127,7 +129,12 @@ HOME
                 <td class="px-4 py-3">{{todo.index}}</td>
                 <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
 
-                  {{todo.title}}
+                  {{todo.title}} 
+                  {% if todo.subtasks_count %}
+
+                  <span class="text-gray-400">  ({{todo.subtasks_count }})</span>
+                  {% endif %}
+                  
                 </th>
                 <td class="px-4 py-3"> {{todo.category}}</td>
                 <td class="px-4 py-3 max-w-[12rem] truncate">

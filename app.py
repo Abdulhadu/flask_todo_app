@@ -1,11 +1,9 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager , UserMixin , login_required ,login_user, logout_user,current_user
 from flask_migrate import Migrate
 from datetime import datetime
 from sqlalchemy import or_
-
-
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///todo.db"
@@ -25,8 +23,7 @@ class Todo(db.Model):
     user_email = db.Column(db.String(200), nullable=False)
     pub_date = db.Column(db.DateTime, nullable=False,
         default=datetime.utcnow)
-    
-    # sub_tasks = db.relationship('SubTask', backref='parrent_todo', lazy=True)
+
 
     def __repr__(self)-> str:
         return f"{self.sno} - {self.title}"
@@ -38,7 +35,6 @@ class SubTask(db.Model):
     todo_id = db.Column(db.Integer, db.ForeignKey('todo.sno'), nullable=False)
     pub_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     
-    # parrent_todo = db.relationship('Todo', backref='sub_tasks', lazy=True)
     
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -68,11 +64,16 @@ def login_post():
     email = request.form['email']
     password = request.form['password']
     user = User.query.filter_by(email=email).first()
-    login_user(user)
-    if current_user.is_admin:
-        return redirect('/admin')
+    if user and user.password == password:  # Plain text password check
+        login_user(user)
+        flash("You have been logged in successfully!", "success")
+        if user.is_admin:
+            return redirect('/admin')
+        else:
+            return redirect('/')
     else:
-        return redirect('/')
+        flash("Invalid email or password. Please try again.", "danger")
+        return redirect('/login') 
         
 
 @app.route('/signup',methods=['POST'])
@@ -144,12 +145,14 @@ def hello_world():
             todo = Todo(title=Title, category=Category, desc=Desc, user_email=email)
             db.session.add(todo)
             db.session.commit()
+            flash("Todo Added Successfully..!")
 
     page = request.args.get('page', 1, type=int)
 
     if current_user.is_authenticated:
         user_email = current_user.email
         allTodo, total_pages = get_paginated_todos(page, user_email)
+        
         return render_template('index.html', allTodo=allTodo, current_user=current_user, total_pages=total_pages)
     else:
         return redirect('/login')
@@ -175,6 +178,7 @@ def get_paginated_todos(page, user_email, search=None):
 
     for index, todo in enumerate(allTodo.items, start=start_index):
         todo.index = index
+        todo.subtasks_count = SubTask.query.filter_by(todo_id=todo.sno).count() 
 
     return allTodo.items, total_pages
 
@@ -210,9 +214,12 @@ def add_task(sno):
             sub_Task = SubTask(title=sub_Title, desc=sub_Desc, todo_id=sno)
             db.session.add(sub_Task)
             db.session.commit()
-            alltask = SubTask.query.all() 
-            return render_template('subtask.html', alltask=alltask , sno = sno)
+            todo = Todo.query.get_or_404(sno)
+            alltask = SubTask.query.filter_by(todo_id=sno).all() 
+            flash("Task added Successfully..!")
+            return render_template('subtask.html', alltask=alltask , todo=todo, sno = sno)
         else:
+            flash("Dont have permission. Please Login first to add tasks")
             return redirect('/login')
     else:
         # Handle the 'GET' request case here
@@ -235,6 +242,7 @@ def update(sno):
         return redirect("/")
     
      updateTodo = Todo.query.filter_by(sno = sno).first()   
+     flash("Successfully Updated..!")
      return render_template('update.html', updateTodo = updateTodo)
 
 @app.route('/delete/<int:sno>')
@@ -242,9 +250,20 @@ def delete(sno):
     deleteTodo = Todo.query.filter_by(sno = sno).first()
     db.session.delete(deleteTodo)
     db.session.commit()
+    flash("Deleted Successfully..!")
     return redirect("/")
 
-     
+
+@app.route('/deleteSubtask/<int:id>')
+def deletesubtask(id):
+    deleteSubtask = SubTask.query.get(id)
+    if deleteSubtask:
+        sno = deleteSubtask.todo_id
+        db.session.delete(deleteSubtask)
+        db.session.commit()
+    flash("Deleted Successfully..!")
+    return redirect(f"/displaytask/{sno}")
+    
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -3,7 +3,9 @@
 UPDATE
 {% endblock title %}
 {% block body %}
+
 <section class="bg-gray-50 mt-16 h-screen dark:bg-gray-900 p-3 sm:p-5 antialiased">
+  {% include 'flash_messages.html' %}
   <div class="dark:bg-gray-900 w-full">
     <h1 class="text-2xl font-bold text-center text-white my-5 pt-30">
       Update Your Task
