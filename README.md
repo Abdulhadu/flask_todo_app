@@ -1,6 +1,6 @@
 # Flask Todo App
 
-![App Screenshot](static/screenshots/sample (4).png)
+![App Screenshot](static/screenshots/sample%20(4).png)
 
 The Flask Todo App is a complete CRUD (Create Read Update Delete) application built using Python in the Flask Framework. It provides a user-friendly interface for managing tasks and subtasks efficiently.
 
