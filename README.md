@@ -33,8 +33,8 @@ The Flask Todo App is a complete CRUD (Create Read Update Delete) application bu
 
 ## ScreenShots
 ### Login Page
-![App Screenshot](static/screenshots/sample (1).png)
+![App Screenshot](static/screenshots/sample%20(1).png)
 ### Signup Page
-![App Screenshot](static/screenshots/sample (2).png)
+![App Screenshot](static/screenshots/sample%20(2).png)
 ### SubTask Page
-![App Screenshot](static/screenshots/sample (3).png)
+![App Screenshot](static/screenshots/sample%20(3).png)
