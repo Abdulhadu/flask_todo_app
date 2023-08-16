@@ -4,6 +4,10 @@ from flask_login import LoginManager , UserMixin , login_required ,login_user, l
 from flask_migrate import Migrate
 from datetime import datetime
 from sqlalchemy import or_
+from enum import Enum
+from flask import jsonify
+from sqlalchemy import text
+from sqlalchemy import Sequence
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///todo.db"
@@ -44,6 +48,64 @@ class User(UserMixin,db.Model):
     email = db.Column(db.String(200))
     password = db.Column(db.String(200))
     is_admin = db.Column(db.Boolean, default=False)
+
+class UserRole(Enum):
+    STAFF = "staff"
+    ADMIN = "admin"
+    NORMAL_USER = "normal user"
+    
+    
+class UserType(UserMixin,db.Model):
+    id = db.Column(db.Integer,primary_key=True,autoincrement=True)
+    User = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    role = db.Column(db.Enum(UserRole), default=UserRole.NORMAL_USER)
+    
+@app.route('/create_user', methods=['POST'])
+def create_user():
+    data = request.get_json()
+    
+    user_id = data.get('user_id')
+    role=UserRole.NORMAL_USER.value
+
+    # try:
+    #       db.execute(
+    #                 "INSERT INTO ser_type (User, role) VALUES (?, ?)",
+    #                 (user_id , role),
+    #             )
+    #       db.commit()
+    # except db.IntegrityError:
+    #     error = f"User is not registered."
+    # else:
+    #     return "User type created successfully."
+    
+    user_id = data.get('user_id')
+    role = data.get('role', UserRole.NORMAL_USER.value)
+
+    user_type = UserType(User=user_id, role=UserRole(role))
+    db.session.add(user_type)
+    db.session.commit()
+    
+
+    
+@app.route('/get_all_users', methods=['GET'])
+def get_all_users():
+    sql = text("SELECT user.id, user.email, user_type.role FROM user JOIN User_type ON user.id = user_type.User")
+    
+    with db.engine.connect() as connection:
+        result = connection.execute(sql)
+    
+        user_list = []
+        for row in result:
+            user_data = {
+                "id": row.id,
+                "email": row.email,
+                "role": row.role
+            }
+            user_list.append(user_data)
+
+    return jsonify(user_list)
+
+     
     
 @login_manager.user_loader
 def get(id):
