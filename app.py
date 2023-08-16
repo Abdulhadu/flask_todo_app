@@ -6,6 +6,7 @@ from datetime import datetime
 from sqlalchemy import or_
 from enum import Enum
 from flask import jsonify
+from flask.views import View
 from sqlalchemy import text
 from sqlalchemy import Sequence
 
@@ -118,7 +119,6 @@ def get_login():
 @app.route('/signup',methods=['GET'])
 def get_signup():
     return render_template('signup.html')
-
 
 
 @app.route('/login',methods=['POST'])
@@ -259,33 +259,30 @@ def search():
     else:
         return redirect('/login')
 
-@app.route('/displaytask/<int:sno>', methods=['GET', 'POST'])
-def get_task(sno):
-    todo = Todo.query.get_or_404(sno)  
-    alltask = SubTask.query.filter_by(todo_id=sno).all() 
-    return render_template('subtask.html',todo=todo,  alltask=alltask, sno=sno)
-    
-    
-@app.route('/addtask/<int:sno>', methods=['GET', 'POST'])
-def add_task(sno):
-    print("sno:", sno) 
-    if request.method == "POST":
-        sub_Title = request.form['title']
-        sub_Desc = request.form['desc']
-        if current_user.is_authenticated:
-            sub_Task = SubTask(title=sub_Title, desc=sub_Desc, todo_id=sno)
-            db.session.add(sub_Task)
-            db.session.commit()
-            todo = Todo.query.get_or_404(sno)
-            alltask = SubTask.query.filter_by(todo_id=sno).all() 
-            flash("Task added Successfully..!")
-            return render_template('subtask.html', alltask=alltask , todo=todo, sno = sno)
+# I am using the class based views in the subtask and remove two separate End points The class based Views provide the functionality to create more then onwe function views and then app.add_rule_url
+class TaskView(View):
+    methods = ['GET', 'POST']
+
+    def dispatch_request(self, sno):
+        if request.method == "POST":
+            sub_Title = request.form['title']
+            sub_Desc = request.form['desc']
+            if current_user.is_authenticated:
+                sub_Task = SubTask(title=sub_Title, desc=sub_Desc, todo_id=sno)
+                db.session.add(sub_Task)
+                db.session.commit()
+                flash("Task added Successfully..!")
+                return redirect(f'/task/{sno}')
+            else:
+                flash("Dont have permission. Please Login first to add tasks")
+                return redirect('/login')
         else:
-            flash("Dont have permission. Please Login first to add tasks")
-            return redirect('/login')
-    else:
-        # Handle the 'GET' request case here
-        return render_template('subtask.html') 
+            todo = Todo.query.get_or_404(sno)
+            alltask = SubTask.query.filter_by(todo_id=sno).all()
+            return render_template('subtask.html', todo=todo, alltask=alltask, sno=sno)
+
+app.add_url_rule('/task/<int:sno>', view_func=TaskView.as_view('subtask.html'))
+
 
 
             
